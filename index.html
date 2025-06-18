@@ -84,16 +84,14 @@
 
         <div class="message" id="message"></div>
 
-        <!-- Botón para abrir el PDF en otra pestaña -->
         <button id="openLinkButton" class="openLinkButton" style="display:none;" onclick="abrirEnlace()">Abrir en otra pestaña</button>
 
-        <!-- Visor PDF -->
         <iframe id="pdfViewer" style="display:none;"></iframe>
     </div>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxJqUdsfzo1vpuZYjvgJmCeE4_-DH7hl_h8-gGS-rOX_OUa4Yn9CrLBy-BuEa46jlSL/exec'; // Cambia por la URL de tu Apps Script
-        let currentPDFUrl = ''; // Variable para guardar el enlace actual
+        let currentPDFUrl = '';
 
         async function buscarCertificado() {
             const input = document.getElementById('reporteInput');
@@ -119,7 +117,7 @@
 
                 if (result.success) {
                     messageDiv.textContent = '✅ Certificado encontrado.';
-                    currentPDFUrl = result.url; // Guarda el enlace para el botón
+                    currentPDFUrl = result.url;
 
                     pdfViewer.src = currentPDFUrl;
                     pdfViewer.style.display = 'block';
@@ -147,4 +145,5 @@
 </body>
 
 </html>
+
 
