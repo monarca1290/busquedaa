@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Certificado - Joyería Venezia</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #0d6efd;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #084298;
+            transform: translateY(-2px);
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Buscar Certificado</h1>
+        <input type="text" id="reporteInput" placeholder="Ingrese el número de reporte">
+        <button onclick="buscarCertificado()">Buscar Certificado</button>
+
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwy0WdXAurUvbNsmp7EChW4hL7keNt06R-Cfng-m3hJiZEjiDtzNB46pxdPmFkcCn3M/exec'; // Pega aquí la URL de tu Apps Script
+
+        async function buscarCertificado() {
+            const input = document.getElementById('reporteInput');
+            const reporteNumero = input.value.trim().toUpperCase();
+            const messageDiv = document.getElementById('message');
+
+            if (!reporteNumero) {
+                messageDiv.textContent = 'Por favor, ingrese un número de reporte.';
+                return;
+            }
+
+            messageDiv.textContent = 'Buscando certificado...';
+
+            try {
+                const response = await fetch(`${scriptURL}?reporte_numero=${encodeURIComponent(reporteNumero)}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    messageDiv.innerHTML = `✅ Certificado encontrado. <a href=\"${result.url}\" target=\"_blank\">Descargar aquí</a>`;
+                } else {
+                    messageDiv.textContent = '❌ ' + result.message;
+                }
+            } catch (error) {
+                console.error('Error al buscar:', error);
+                messageDiv.textContent = '⚠️ Error de conexión. Inténtalo de nuevo.';
+            }
+        }
+    </script>
+
+</body>
+
+</html>
