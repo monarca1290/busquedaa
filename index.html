@@ -193,7 +193,6 @@
             border: 1px solid #e0e0e0;
             border-radius: var(--border-radius);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            /* Keep this hidden by default */
             display: none;
         }
 
@@ -227,7 +226,6 @@
             }
         }
 
-        /* Animaciones */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -244,7 +242,6 @@
             animation: fadeIn 0.5s ease-out forwards;
         }
 
-        /* Iconos */
         .icon {
             width: 20px;
             height: 20px;
@@ -253,7 +250,6 @@
 </head>
 
 <body>
-
     <div class="container">
         <img src="https://joyeriavenezia.com/wp-content/uploads/2021/11/joyeria-venezia-logo-c.svg"
             alt="Joyería Venezia Logo" class="logo">
@@ -307,8 +303,103 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbw7nOwvH721hArcIaYpGg5av3emUm0MHJEgMOLfdnmZxn-u47V9ql4I0DPCxTrdaa2C/exec';
+        const scriptURL = 'YOUR_APPS_SCRIPT_DEPLOYMENT_URL';
         let currentPDFUrl = '';
 
         // Mostrar año actual
-        document.getElementById('currentYear').textContent = new
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        function buscarCertificado() {
+            const reporteInput = document.getElementById('reporteInput').value.trim();
+            const pesoJoyaInput = document.getElementById('pesoJoyaInput').value.trim();
+            const messageDiv = document.getElementById('message');
+            const pdfViewer = document.getElementById('pdfViewer');
+            const openLinkButton = document.getElementById('openLinkButton');
+
+            // Reset UI
+            messageDiv.style.display = 'none';
+            pdfViewer.style.display = 'none';
+            openLinkButton.style.display = 'none';
+            messageDiv.className = 'message';
+
+            // Validate inputs
+            if (!reporteInput) {
+                showMessage('Por favor ingrese un número de reporte', 'error');
+                return;
+            }
+
+            if (!pesoJoyaInput) {
+                showMessage('Por favor ingrese el peso de la joya', 'error');
+                return;
+            }
+
+            const pesoJoya = parseFloat(pesoJoyaInput);
+            if (isNaN(pesoJoya) || pesoJoya <= 0) {
+                showMessage('Por favor ingrese un peso válido mayor que 0', 'error');
+                return;
+            }
+
+            showMessage('Buscando certificado...', 'loading');
+
+            // Send data to Google Apps Script
+            fetch(scriptURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    reporte: reporteInput,
+                    peso: pesoJoya
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.pdfUrl) {
+                        currentPDFUrl = data.pdfUrl;
+                        pdfViewer.src = data.pdfUrl;
+                        pdfViewer.style.display = 'block';
+                        openLinkButton.style.display = 'flex';
+                        showMessage('Certificado encontrado con éxito', 'success');
+                    } else {
+                        showMessage('Certificado encontrado pero no se pudo cargar el PDF', 'error');
+                    }
+                } else {
+                    showMessage(data.message || 'Error al buscar el certificado', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showMessage('Error al conectar con el servidor', 'error');
+            });
+        }
+
+        function abrirEnlace() {
+            if (currentPDFUrl) {
+                window.open(currentPDFUrl, '_blank');
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            messageDiv.classList.add('fade-in');
+        }
+
+        // Allow searching by pressing Enter key
+        document.getElementById('reporteInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarCertificado();
+            }
+        });
+
+        document.getElementById('pesoJoyaInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarCertificado();
+            }
+        });
+    </script>
+</body>
+</html>
