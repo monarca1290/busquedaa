@@ -1,3 +1,8 @@
+Okay, I've modified your HTML and Apps Script code to include the weight validation. Here's the updated code:
+
+**1. Modified HTML (index.html):**
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 
@@ -124,7 +129,8 @@
             box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
         }
 
-        button, .openLinkButton {
+        button,
+        .openLinkButton {
             background-color: var(--primary-color);
             color: white;
             padding: 15px;
@@ -143,13 +149,15 @@
             letter-spacing: 0.5px;
         }
 
-        button:hover, .openLinkButton:hover {
+        button:hover,
+        .openLinkButton:hover {
             background-color: var(--primary-hover);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
         }
 
-        button:active, .openLinkButton:active {
+        button:active,
+        .openLinkButton:active {
             transform: translateY(0);
         }
 
@@ -214,11 +222,11 @@
             .container {
                 padding: 30px 20px;
             }
-            
+
             h1 {
                 font-size: 1.8rem;
             }
-            
+
             iframe {
                 height: 400px;
             }
@@ -226,8 +234,15 @@
 
         /* Animaciones */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .fade-in {
@@ -245,19 +260,33 @@
 <body>
 
     <div class="container">
-        <img src="https://joyeriavenezia.com/wp-content/uploads/2021/11/joyeria-venezia-logo-c.svg" alt="Joyería Venezia Logo" class="logo">
+        <img src="https://joyeriavenezia.com/wp-content/uploads/2021/11/joyeria-venezia-logo-c.svg"
+            alt="Joyería Venezia Logo" class="logo">
         <h1>Buscar Certificado</h1>
-        
+
         <div class="search-container">
-            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                viewBox="0 0 16 16">
+                <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
             </svg>
             <input type="text" id="reporteInput" placeholder="Ingrese el número de reporte">
         </div>
-        
+
+        <div class="search-container">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                viewBox="0 0 16 16">
+                <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+            </svg>
+            <input type="number" id="pesoJoyaInput" placeholder="Ingrese el peso de la joya" step="0.01">
+        </div>
+
         <button onclick="buscarCertificado()">
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                viewBox="0 0 16 16">
+                <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
             </svg>
             Buscar Certificado
         </button>
@@ -265,15 +294,18 @@
         <div class="message" id="message"></div>
 
         <button id="openLinkButton" class="openLinkButton" onclick="abrirEnlace()">
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
-                <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                    d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z" />
+                <path fill-rule="evenodd"
+                    d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z" />
             </svg>
             Abrir en otra pestaña
         </button>
 
-        <iframe id="pdfViewer"></iframe> 
-        
+        <iframe id="pdfViewer"></iframe>
+
         <div class="footer">
             Joyería Venezia © <span id="currentYear"></span> - Todos los derechos reservados
         </div>
@@ -284,75 +316,4 @@
         let currentPDFUrl = '';
 
         // Mostrar año actual
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-        async function buscarCertificado() {
-            const input = document.getElementById('reporteInput');
-            const reporteNumero = input.value.trim().toUpperCase();
-            const messageDiv = document.getElementById('message');
-            const pdfViewer = document.getElementById('pdfViewer'); // Aunque no se usará para mostrar, se mantiene la referencia
-            const openLinkButton = document.getElementById('openLinkButton');
-
-            // Resetear vista
-            messageDiv.className = 'message';
-            messageDiv.style.display = 'none';
-            // pdfViewer.style.display = 'none'; // Ya está oculto por CSS, pero puedes mantenerlo por si acaso.
-            openLinkButton.style.display = 'none';
-
-            if (!reporteNumero) {
-                showMessage('Por favor, ingrese un número de reporte.', 'error');
-                return;
-            }
-
-            showMessage('Buscando certificado...', 'loading');
-
-            try {
-                const response = await fetch(`${scriptURL}?reporte_numero=${encodeURIComponent(reporteNumero)}`);
-                const result = await response.json();
-
-                if (result.success) {
-                    showMessage('Certificado encontrado con éxito.', 'success');
-                    currentPDFUrl = result.url;
-
-                    // --- ELIMINADAS ESTAS LÍNEAS PARA EVITAR LA PREVISUALIZACIÓN EN EL IFRAME ---
-                    // pdfViewer.src = currentPDFUrl;
-                    // pdfViewer.style.display = 'block';
-                    // pdfViewer.classList.add('fade-in');
-                    // -------------------------------------------------------------------------
-
-                    openLinkButton.style.display = 'flex'; // Muestra el botón
-                    openLinkButton.classList.add('fade-in');
-                } else {
-                    showMessage(result.message || 'No se encontró el certificado.', 'error');
-                }
-            } catch (error) {
-                console.error('Error al buscar:', error);
-                showMessage('Error de conexión. Inténtalo de nuevo.', 'error');
-            }
-        }
-
-        function showMessage(text, type) {
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = text;
-            messageDiv.className = `message ${type}`;
-            messageDiv.style.display = 'block';
-            messageDiv.classList.add('fade-in');
-        }
-
-        function abrirEnlace() {
-            if (currentPDFUrl) {
-                window.open(currentPDFUrl, '_blank');
-            }
-        }
-
-        // Permitir búsqueda con Enter
-        document.getElementById('reporteInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                buscarCertificado();
-            }
-        });
-    </script>
-
-</body>
-
-</html>
+        document.getElementById('currentYear').textContent = new
