@@ -5,72 +5,238 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Certificado - Joyería Venezia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #0d6efd;
+            --primary-hover: #084298;
+            --secondary-color: #6c757d;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #f9f9f9;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             min-height: 100vh;
-            margin: 0;
             padding: 20px;
+            color: var(--dark-color);
+            line-height: 1.6;
         }
 
         .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
+            background-color: white;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            max-width: 900px;
             width: 100%;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #d4af37, #f5f7fa);
+        }
+
+        .logo {
+            width: 220px;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: scale(1.03);
         }
 
         h1 {
-            margin-bottom: 20px;
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: var(--dark-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #f5f7fa);
+            border-radius: 3px;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary-color);
+            font-size: 1.2rem;
         }
 
         input {
             width: 100%;
-            padding: 12px;
+            padding: 15px 15px 15px 45px;
             margin-bottom: 20px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            font-size: 16px;
+            border-radius: var(--border-radius);
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+            transition: var(--transition);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
         }
 
         button, .openLinkButton {
-            background-color: #0d6efd;
+            background-color: var(--primary-color);
             color: white;
-            padding: 12px;
+            padding: 15px;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             width: 100%;
-            font-size: 16px;
+            font-size: 1rem;
             font-weight: 600;
-            transition: background-color 0.3s, transform 0.2s;
+            transition: var(--transition);
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
         }
 
         button:hover, .openLinkButton:hover {
-            background-color: #084298;
+            background-color: var(--primary-hover);
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+        }
+
+        button:active, .openLinkButton:active {
+            transform: translateY(0);
         }
 
         .message {
-            margin-top: 20px;
-            font-size: 16px;
-            color: #333;
+            margin: 25px 0;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .message.success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+            display: block;
+        }
+
+        .message.error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--error-color);
+            border-left: 4px solid var(--error-color);
+            display: block;
+        }
+
+        .message.loading {
+            background-color: rgba(13, 110, 253, 0.1);
+            color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+            display: block;
         }
 
         iframe {
             margin-top: 30px;
             width: 100%;
             height: 600px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+
+        .openLinkButton {
+            display: none;
+            background-color: #6c757d;
+        }
+
+        .openLinkButton:hover {
+            background-color: #5a6268;
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            iframe {
+                height: 400px;
+            }
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Iconos */
+        .icon {
+            width: 20px;
+            height: 20px;
         }
     </style>
 </head>
@@ -78,20 +244,46 @@
 <body>
 
     <div class="container">
+        <img src="https://joyeriavenezia.com/wp-content/uploads/2021/11/joyeria-venezia-logo-c.svg" alt="Joyería Venezia Logo" class="logo">
         <h1>Buscar Certificado</h1>
-        <input type="text" id="reporteInput" placeholder="Ingrese el número de reporte">
-        <button onclick="buscarCertificado()">Buscar Certificado</button>
+        
+        <div class="search-container">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+            <input type="text" id="reporteInput" placeholder="Ingrese el número de reporte">
+        </div>
+        
+        <button onclick="buscarCertificado()">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+            Buscar Certificado
+        </button>
 
         <div class="message" id="message"></div>
 
-        <button id="openLinkButton" class="openLinkButton" style="display:none;" onclick="abrirEnlace()">Abrir en otra pestaña</button>
+        <button id="openLinkButton" class="openLinkButton" onclick="abrirEnlace()">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+                <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+            </svg>
+            Abrir en otra pestaña
+        </button>
 
-        <iframe id="pdfViewer" style="display:none;"></iframe>
+        <iframe id="pdfViewer"></iframe>
+        
+        <div class="footer">
+            Joyería Venezia © <span id="currentYear"></span> - Todos los derechos reservados
+        </div>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbw7nOwvH721hArcIaYpGg5av3emUm0MHJEgMOLfdnmZxn-u47V9ql4I0DPCxTrdaa2C/exec'; // Cambia por la URL de tu Web App
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbw7nOwvH721hArcIaYpGg5av3emUm0MHJEgMOLfdnmZxn-u47V9ql4I0DPCxTrdaa2C/exec';
         let currentPDFUrl = '';
+
+        // Mostrar año actual
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
 
         async function buscarCertificado() {
             const input = document.getElementById('reporteInput');
@@ -100,39 +292,47 @@
             const pdfViewer = document.getElementById('pdfViewer');
             const openLinkButton = document.getElementById('openLinkButton');
 
+            // Resetear vista
+            messageDiv.className = 'message';
+            messageDiv.style.display = 'none';
+            pdfViewer.style.display = 'none';
+            openLinkButton.style.display = 'none';
+
             if (!reporteNumero) {
-                messageDiv.textContent = 'Por favor, ingrese un número de reporte.';
-                pdfViewer.style.display = 'none';
-                openLinkButton.style.display = 'none';
+                showMessage('Por favor, ingrese un número de reporte.', 'error');
                 return;
             }
 
-            messageDiv.textContent = 'Buscando certificado...';
-            pdfViewer.style.display = 'none';
-            openLinkButton.style.display = 'none';
+            showMessage('Buscando certificado...', 'loading');
 
             try {
                 const response = await fetch(`${scriptURL}?reporte_numero=${encodeURIComponent(reporteNumero)}`);
                 const result = await response.json();
 
                 if (result.success) {
-                    messageDiv.textContent = '✅ Certificado encontrado.';
+                    showMessage('Certificado encontrado con éxito.', 'success');
                     currentPDFUrl = result.url;
 
                     pdfViewer.src = currentPDFUrl;
                     pdfViewer.style.display = 'block';
-                    openLinkButton.style.display = 'block';
+                    pdfViewer.classList.add('fade-in');
+                    openLinkButton.style.display = 'flex';
+                    openLinkButton.classList.add('fade-in');
                 } else {
-                    messageDiv.textContent = '❌ ' + result.message;
-                    pdfViewer.style.display = 'none';
-                    openLinkButton.style.display = 'none';
+                    showMessage(result.message || 'No se encontró el certificado.', 'error');
                 }
             } catch (error) {
                 console.error('Error al buscar:', error);
-                messageDiv.textContent = '⚠️ Error de conexión. Inténtalo de nuevo.';
-                pdfViewer.style.display = 'none';
-                openLinkButton.style.display = 'none';
+                showMessage('Error de conexión. Inténtalo de nuevo.', 'error');
             }
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            messageDiv.classList.add('fade-in');
         }
 
         function abrirEnlace() {
@@ -140,6 +340,13 @@
                 window.open(currentPDFUrl, '_blank');
             }
         }
+
+        // Permitir búsqueda con Enter
+        document.getElementById('reporteInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarCertificado();
+            }
+        });
     </script>
 
 </body>
