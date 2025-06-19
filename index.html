@@ -190,6 +190,7 @@
             border: 1px solid #e0e0e0;
             border-radius: var(--border-radius);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            /* Keep this hidden by default */
             display: none;
         }
 
@@ -271,7 +272,7 @@
             Abrir en otra pestaña
         </button>
 
-        <iframe id="pdfViewer"></iframe>
+        <iframe id="pdfViewer"></iframe> 
         
         <div class="footer">
             Joyería Venezia © <span id="currentYear"></span> - Todos los derechos reservados
@@ -289,13 +290,13 @@
             const input = document.getElementById('reporteInput');
             const reporteNumero = input.value.trim().toUpperCase();
             const messageDiv = document.getElementById('message');
-            const pdfViewer = document.getElementById('pdfViewer');
+            const pdfViewer = document.getElementById('pdfViewer'); // Aunque no se usará para mostrar, se mantiene la referencia
             const openLinkButton = document.getElementById('openLinkButton');
 
             // Resetear vista
             messageDiv.className = 'message';
             messageDiv.style.display = 'none';
-            pdfViewer.style.display = 'none';
+            // pdfViewer.style.display = 'none'; // Ya está oculto por CSS, pero puedes mantenerlo por si acaso.
             openLinkButton.style.display = 'none';
 
             if (!reporteNumero) {
@@ -313,10 +314,13 @@
                     showMessage('Certificado encontrado con éxito.', 'success');
                     currentPDFUrl = result.url;
 
-                    pdfViewer.src = currentPDFUrl;
-                    pdfViewer.style.display = 'block';
-                    pdfViewer.classList.add('fade-in');
-                    openLinkButton.style.display = 'flex';
+                    // --- ELIMINADAS ESTAS LÍNEAS PARA EVITAR LA PREVISUALIZACIÓN EN EL IFRAME ---
+                    // pdfViewer.src = currentPDFUrl;
+                    // pdfViewer.style.display = 'block';
+                    // pdfViewer.classList.add('fade-in');
+                    // -------------------------------------------------------------------------
+
+                    openLinkButton.style.display = 'flex'; // Muestra el botón
                     openLinkButton.classList.add('fade-in');
                 } else {
                     showMessage(result.message || 'No se encontró el certificado.', 'error');
