@@ -303,10 +303,9 @@
     </div>
 
     <script>
-        const scriptURL = 'YOUR_APPS_SCRIPT_DEPLOYMENT_URL';
+        const scriptURL = 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI';
         let currentPDFUrl = '';
 
-        // Mostrar año actual
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
         function buscarCertificado() {
@@ -316,13 +315,11 @@
             const pdfViewer = document.getElementById('pdfViewer');
             const openLinkButton = document.getElementById('openLinkButton');
 
-            // Reset UI
             messageDiv.style.display = 'none';
             pdfViewer.style.display = 'none';
             openLinkButton.style.display = 'none';
             messageDiv.className = 'message';
 
-            // Validate inputs
             if (!reporteInput) {
                 showMessage('Por favor ingrese un número de reporte', 'error');
                 return;
@@ -341,37 +338,27 @@
 
             showMessage('Buscando certificado...', 'loading');
 
-            // Send data to Google Apps Script
             fetch(scriptURL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    reporte: reporteInput,
-                    peso: pesoJoya
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reporte: reporteInput, peso: pesoJoya })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    if (data.pdfUrl) {
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.pdfUrl) {
                         currentPDFUrl = data.pdfUrl;
                         pdfViewer.src = data.pdfUrl;
                         pdfViewer.style.display = 'block';
                         openLinkButton.style.display = 'flex';
                         showMessage('Certificado encontrado con éxito', 'success');
                     } else {
-                        showMessage('Certificado encontrado pero no se pudo cargar el PDF', 'error');
+                        showMessage(data.message || 'Certificado no encontrado', 'error');
                     }
-                } else {
-                    showMessage(data.message || 'Error al buscar el certificado', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showMessage('Error al conectar con el servidor', 'error');
-            });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('Error al conectar con el servidor', 'error');
+                });
         }
 
         function abrirEnlace() {
@@ -388,18 +375,14 @@
             messageDiv.classList.add('fade-in');
         }
 
-        // Allow searching by pressing Enter key
-        document.getElementById('reporteInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                buscarCertificado();
-            }
+        document.getElementById('reporteInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') buscarCertificado();
         });
 
-        document.getElementById('pesoJoyaInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                buscarCertificado();
-            }
+        document.getElementById('pesoJoyaInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') buscarCertificado();
         });
     </script>
 </body>
+
 </html>
