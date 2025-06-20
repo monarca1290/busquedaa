@@ -56,25 +56,36 @@
         </form>
     </div>
 
-    <script>
-        const searchForm = document.getElementById('searchForm');
-        const searchBtn = document.getElementById('searchBtn');
-        const reportInput = document.getElementById('reporte_numero');
+<script>
+    const searchForm = document.getElementById('searchForm');
+    const searchBtn = document.getElementById('searchBtn');
+    const reportInput = document.getElementById('reporte_numero');
 
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx-p3W1h-a0QrhgBtRNWKCJxePRFK0E3xr9vn0zMApnrYMlPhGwSLsK3xtKd8k5RF-1/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx-p3W1h-a0QrhgBtRNWKCJxePRFK0E3xr9vn0zMApnrYMlPhGwSLsK3xtKd8k5RF-1/exec';
 
-        searchForm.addEventListener('submit', e => {
-            e.preventDefault();
-            searchBtn.disabled = true;
-            searchBtn.textContent = 'Buscando...';
-            const reporteNumero = reportInput.value.trim();
-            const fetchURL = `${scriptURL}?reporte_numero=${encodeURIComponent(reporteNumero)}`;
+    searchForm.addEventListener('submit', e => {
+        e.preventDefault();
+        searchBtn.disabled = true;
+        searchBtn.textContent = 'Buscando...';
+        const reporteNumero = reportInput.value.trim();
+        const fetchURL = `${scriptURL}?reporte_numero=${encodeURIComponent(reporteNumero)}`;
 
-            fetch(fetchURL, { method: 'GET' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Solicitar contraseña (peso final)
+        fetch(fetchURL, { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let attempts = 0; // Contador de intentos
+
+                    const solicitarContrasena = () => {
+                        if (attempts >= 4) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Demasiados intentos fallidos',
+                                text: 'Contacta con nosotros para enviarte tu certificado: contacto@joyeriavenezia.com'
+                            });
+                            return;
+                        }
+
                         Swal.fire({
                             title: 'Ingrese la contraseña',
                             text: 'La contraseña es el peso final de la joya o piedra.',
@@ -90,7 +101,7 @@
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                if (parseFloat(result.value) === parseFloat(data.peso)) { // Compara la contraseña con el peso correcto
+                                if (parseFloat(result.value) === parseFloat(data.peso)) {
                                     Swal.fire({
                                         icon: 'success',
                                         title: '¡Contraseña correcta!',
@@ -101,31 +112,44 @@
                                     });
                                     setTimeout(() => { window.open(data.url, '_blank'); }, 1000);
                                 } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Contraseña incorrecta',
-                                        text: 'El peso ingresado no coincide con el registrado.'
-                                    });
+                                    attempts++;
+                                    if (attempts >= 4) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Demasiados intentos fallidos',
+                                            text: 'Contacta con nosotros para enviarte tu certificado: contacto@joyeriavenezia.com'
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Contraseña incorrecta',
+                                            text: `El peso ingresado no coincide. Intento ${attempts} de 4.`
+                                        }).then(() => {
+                                            solicitarContrasena(); // Permite volver a intentar
+                                        });
+                                    }
                                 }
                             }
                         });
-                    } else {
-                        Swal.fire({ icon: 'warning', title: 'Atención', text: data.message });
-                    }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error de Conexión',
-                        text: 'No se pudo contactar al servidor. Error: ' + error.message,
-                    });
-                })
-                .finally(() => {
-                    searchBtn.disabled = false;
-                    searchBtn.textContent = 'Buscar';
-                });
-        });
-    </script>
+                    };
 
+                    solicitarContrasena(); // Inicia la validación
+                } else {
+                    Swal.fire({ icon: 'warning', title: 'Atención', text: data.message });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de Conexión',
+                    text: 'No se pudo contactar al servidor. Error: ' + error.message,
+                });
+            })
+            .finally(() => {
+                searchBtn.disabled = false;
+                searchBtn.textContent = 'Buscar';
+            });
+    });
+</script>
 </body>
 </html>
