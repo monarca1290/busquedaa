@@ -60,38 +60,63 @@
         const searchForm = document.getElementById('searchForm');
         const searchBtn = document.getElementById('searchBtn');
         const reportInput = document.getElementById('reporte_numero');
-        
-        // ***************************************************************
-        // ** PEGA AQUÍ LA MISMA URL DE DESPLIEGUE DEL APPS SCRIPT      **
-        // ***************************************************************
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbww2-ovN2Uak_6oPELRKuv-UZISfBuyBaxeLDFE3PV4FsaNy13s_GGjC2LAmBUXVG8a/exec'; 
+
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbx-p3W1h-a0QrhgBtRNWKCJxePRFK0E3xr9vn0zMApnrYMlPhGwSLsK3xtKd8k5RF-1/exec';
 
         searchForm.addEventListener('submit', e => {
             e.preventDefault();
             searchBtn.disabled = true;
             searchBtn.textContent = 'Buscando...';
-            const reporteNumero = reportInput.value;
+            const reporteNumero = reportInput.value.trim();
             const fetchURL = `${scriptURL}?reporte_numero=${encodeURIComponent(reporteNumero)}`;
 
             fetch(fetchURL, { method: 'GET' })
                 .then(response => response.json())
                 .then(data => {
-                    if(data.success) {
+                    if (data.success) {
+                        // Solicitar contraseña (peso final)
                         Swal.fire({
-                            icon: 'success', title: '¡Certificado Encontrado!',
-                            text: 'Su documento se abrirá en una nueva pestaña.',
-                            confirmButtonText: 'Abrir Documento'
+                            title: 'Ingrese la contraseña',
+                            text: 'La contraseña es el peso final de la joya o piedra.',
+                            input: 'text',
+                            inputPlaceholder: 'Ej: 2.5',
+                            showCancelButton: true,
+                            confirmButtonText: 'Validar',
+                            cancelButtonText: 'Cancelar',
+                            inputValidator: (value) => {
+                                if (!value) {
+                                    return 'Debe ingresar la contraseña';
+                                }
+                            }
                         }).then((result) => {
-                            if (result.isConfirmed) { window.open(data.url, '_blank'); }
+                            if (result.isConfirmed) {
+                                if (parseFloat(result.value) === parseFloat(data.peso)) { // Compara la contraseña con el peso correcto
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Contraseña correcta!',
+                                        text: 'El documento se abrirá en una nueva pestaña.',
+                                        confirmButtonText: 'Abrir Documento'
+                                    }).then(() => {
+                                        window.open(data.url, '_blank');
+                                    });
+                                    setTimeout(() => { window.open(data.url, '_blank'); }, 1000);
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Contraseña incorrecta',
+                                        text: 'El peso ingresado no coincide con el registrado.'
+                                    });
+                                }
+                            }
                         });
-                        setTimeout(() => { window.open(data.url, '_blank'); }, 1000);
                     } else {
-                         Swal.fire({ icon: 'warning', title: 'Atención', text: data.message });
+                        Swal.fire({ icon: 'warning', title: 'Atención', text: data.message });
                     }
                 })
                 .catch(error => {
                     Swal.fire({
-                        icon: 'error', title: 'Error de Conexión',
+                        icon: 'error',
+                        title: 'Error de Conexión',
                         text: 'No se pudo contactar al servidor. Error: ' + error.message,
                     });
                 })
@@ -101,5 +126,6 @@
                 });
         });
     </script>
+
 </body>
 </html>
